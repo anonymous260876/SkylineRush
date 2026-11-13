@@ -45,4 +45,20 @@ Config.World = {
     ZoneCenters = {Vector3.new(0, 0, -23), Vector3.new(-85, 0, -78), Vector3.new(85, 0, -78)},
     Spawn = Vector3.new(0, 12, 85),
 }
+
+Config.UI = {
+    Colors = {
+        Background = Color3.fromRGB(18, 29, 52),
+        Accent = Color3.fromRGB(56, 210, 235),
+        Text = Color3.fromRGB(231, 245, 255),
+        Coin = Color3.fromRGB(255, 214, 107),
+        Income = Color3.fromRGB(133, 226, 179),
+        Danger = Color3.fromRGB(255, 95, 95),
+    },
+    ButtonSize = 64,
+    CornerRadius = 12,
+    DrawerMaxWidth = 420,
+    DrawerPadding = 16,
+}
+
 return Config
