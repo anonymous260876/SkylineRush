@@ -331,6 +331,29 @@ notifyEvent.OnClientEvent:Connect(function(message)
 	end)
 end)
 
+-- Audio controls for environment (local-only mute toggle)
+local function setupAudioControls()
+	local audioButton = Instance.new("TextButton")
+	audioButton.Name = "AudioButton"
+	audioButton.Size = UDim2.fromOffset(70, 70)
+	audioButton.Position = UDim2.new(1, -96, 0.65, 0)
+	audioButton.AnchorPoint = Vector2.new(1, 0.5)
+	audioButton.BackgroundTransparency = 1
+	audioButton.Text = "🔊"
+	audioButton.TextSize = 30
+	audioButton.Font = Enum.Font.GothamBold
+	audioButton.Parent = screen
+
+	audioButton.MouseButton1Click:Connect(function()
+		-- Local-only mute toggle: does NOT broadcast to other players
+		if AudioService and AudioService.ToggleMute then
+			AudioService:ToggleMute()
+			audioButton.Text = AudioService:Icon()
+		end)
+end
+
+setupAudioControls()
+
 local function formatCost(value)
 	if value == "MAX" then return "MAX" end
 	return type(value) == "number" and ("$" .. tostring(value)) or tostring(value)

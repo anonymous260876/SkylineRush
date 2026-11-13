@@ -20,8 +20,10 @@ local services = script.Parent.Services
 local Data = require(services.PlayerDataService)
 local World = require(services.WorldService)
 local Game = require(services.GameService)
+local Env = require(services.EnvironmentService)
 
 Data:Start()
+Env:Start()
 Game:Start(Data, World, sync, notify)
 local requestTimes = {}
 request.OnServerEvent:Connect(function(player)

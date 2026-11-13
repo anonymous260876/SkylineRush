@@ -37,6 +37,30 @@ local function sphere(parent, name, pos, size, color, material)
     return part(parent, name, Vector3.new(size, size, size), pos, color, material or Enum.Material.Neon, Enum.PartType.Ball)
 end
 
+local function createLayeredIsland(folder, name, size, position, color, material)
+    -- Main top platform
+    part(folder, name .. "Top", Vector3.new(size.X, 4, size.Z), position, color, material)
+    -- Layered rocky undersides
+    for i = 1, 3 do
+        local scale = 1 - (i * 0.2)
+        part(folder, name .. "Base" .. i, Vector3.new(size.X * scale, 4, size.Z * scale), position - Vector3.new(0, i * 4, 0), COLORS.stone, Enum.Material.Slate)
+    end
+end
+
+local function createSkyAnchor(folder, position)
+    local model = Instance.new("Model")
+    model.Name = "SkyAnchor"
+    model.Parent = folder
+    local base = part(model, "Base", Vector3.new(10, 2, 10), position, COLORS.stone, Enum.Material.Slate)
+    local crystal = sphere(model, "Crystal", position + Vector3.new(0, 8, 0), 12, COLORS.cyan, Enum.Material.Glass)
+    local light = Instance.new("PointLight")
+    light.Range = 60
+    light.Brightness = 5
+    light.Color = COLORS.cyan
+    light.Parent = crystal
+    billboard(crystal, "CORE OF SKYLINE", COLORS.gold, 8)
+end
+
 local function billboard(parent, words, tint, y)
     local gui = Instance.new("BillboardGui")
     gui.Name = "Label"
@@ -90,23 +114,22 @@ function World:Create()
     self.ZoneBarriers = {}
 
     Lighting.ClockTime = 14
-    Lighting.Brightness = 3
-    Lighting.Ambient = Color3.fromRGB(80, 126, 165)
-    Lighting.OutdoorAmbient = Color3.fromRGB(90, 140, 180)
+    Lighting.Brightness = Config.Environment.SkyboxBrightness or 3
+    Lighting.Ambient = Config.Environment.Ambient
+    Lighting.OutdoorAmbient = Config.Environment.OutdoorAmbient
     local atmosphere = Lighting:FindFirstChildOfClass("Atmosphere") or Instance.new("Atmosphere")
-    atmosphere.Density = 0.22
-    atmosphere.Haze = 1.2
-    atmosphere.Color = Color3.fromRGB(175, 217, 255)
+    atmosphere.Density = 0.25
+    atmosphere.Haze = 1.5
+    atmosphere.Color = Config.Environment.FogColor
     atmosphere.Parent = Lighting
 
-    -- Main island and two elevated zone gardens, with bridges and unique materials.
-    part(folder, "FloatingMainIsland", Config.World.MainSize, Vector3.new(0, -1, 0), COLORS.stone, Enum.Material.Slate)
-    part(folder, "GrassTop", Vector3.new(248, 2, 238), Vector3.new(0, 6, 0), COLORS.green, Enum.Material.Grass)
+    -- Main island and two elevated zone gardens
+    createLayeredIsland(folder, "FloatingMainIsland", Config.World.MainSize, Vector3.new(0, -1, 0), COLORS.green, Enum.Material.Grass)
+    createSkyAnchor(folder, Vector3.new(0, 8, -50))
     for zone = 2, 3 do
         local center = Config.World.ZoneCenters[zone]
         local color = zone == 2 and COLORS.cyan or COLORS.violet
-        part(folder, "ZoneIsland" .. zone, Vector3.new(65, 7, 57), Vector3.new(center.X, 10, center.Z), COLORS.stone, Enum.Material.Slate)
-        part(folder, "ZoneSurface" .. zone, Vector3.new(63, 2, 55), Vector3.new(center.X, 14, center.Z), color, Enum.Material.SmoothPlastic)
+        createLayeredIsland(folder, "ZoneIsland" .. zone, Vector3.new(65, 7, 57), Vector3.new(center.X, 10, center.Z), color, Enum.Material.SmoothPlastic)
     end
     local spawn = Instance.new("SpawnLocation")
     spawn.Name = "PlayerSpawn"

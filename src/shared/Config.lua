@@ -44,6 +44,58 @@ Config.World = {
     MainSize = Vector3.new(250, 12, 240),
     ZoneCenters = {Vector3.new(0, 0, -23), Vector3.new(-85, 0, -78), Vector3.new(85, 0, -78)},
     Spawn = Vector3.new(0, 12, 85),
+    Environment = {
+        Ambient = Color3.fromRGB(80, 126, 165),
+        OutdoorAmbient = Color3.fromRGB(90, 140, 180),
+        FogColor = Color3.fromRGB(175, 217, 255),
+        FogEnd = 1000,
+        SkyboxBrightness = 1,
+        CycleDuration = 600, -- 10 mins per cycle
+        AdminIds = {}, -- Add UserIds here
+        Audio = {
+            MasterVolume = 1.0,
+            MusicVolume = 0.7,
+            AmbientVolume = 0.5,
+        },
+    },
+    WeatherPresets = {
+        Clear = {
+            AtmosphereDensity = 0.25,
+            Haze = 1.0,
+            Ambient = Color3.fromRGB(80, 126, 165),
+            OutdoorAmbient = Color3.fromRGB(90, 140, 180),
+            FogColor = Color3.fromRGB(175, 217, 255),
+            RainIntensity = 0,
+            WindIntensity = 0.1,
+        },
+        Cloudy = {
+            AtmosphereDensity = 0.4,
+            Haze = 2.0,
+            Ambient = Color3.fromRGB(60, 90, 120),
+            OutdoorAmbient = Color3.fromRGB(70, 100, 130),
+            FogColor = Color3.fromRGB(140, 160, 180),
+            RainIntensity = 0.2,
+            WindIntensity = 0.3,
+        },
+        Rain = {
+            AtmosphereDensity = 0.55,
+            Haze = 3.5,
+            Ambient = Color3.fromRGB(45, 65, 85),
+            OutdoorAmbient = Color3.fromRGB(50, 70, 90),
+            FogColor = Color3.fromRGB(100, 120, 140),
+            RainIntensity = 0.8,
+            WindIntensity = 0.6,
+        },
+        Storm = {
+            AtmosphereDensity = 0.75,
+            Haze = 5.0,
+            Ambient = Color3.fromRGB(25, 35, 50),
+            OutdoorAmbient = Color3.fromRGB(30, 40, 60),
+            FogColor = Color3.fromRGB(60, 70, 90),
+            RainIntensity = 1.0,
+            WindIntensity = 0.9,
+        },
+    },
 }
 
 Config.UI = {

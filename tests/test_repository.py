@@ -46,6 +46,7 @@ class RepositoryTests(unittest.TestCase):
             "src/server/Services/WorldService.lua",
             "src/server/Services/GameService.lua",
             "src/server/Services/PlayerDataService.lua",
+            "src/server/Services/EnvironmentService.lua",
         ]:
             self.assertTrue((ROOT / path).is_file(), path)
             self.assertGreater((ROOT / path).stat().st_size, 100)
