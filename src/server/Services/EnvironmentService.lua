@@ -5,7 +5,6 @@ local Players = game:GetService("Players")
 local Config = require(ReplicatedStorage.Shared.Config)
 
 local Environment = {}
-
 local envConfig = Config.World.Environment
 local weatherPresets = Config.World.WeatherPresets
 
@@ -40,6 +39,12 @@ end
 function Environment:Start()
     local cycleDuration = envConfig.CycleDuration or 600
 
+    -- Validate cycle duration; fall back to default if invalid
+    if type(cycleDuration) ~= "number" or cycleDuration <= 0 then
+        cycleDuration = 600
+        warn("[Environment] Invalid CycleDuration, falling back to 600 seconds (10 min)")
+    end
+
     -- Setup RemoteEvents
     local remotes = ReplicatedStorage:FindFirstChild("Remotes")
     if remotes then
@@ -51,20 +56,33 @@ function Environment:Start()
         weatherSync.Name = "WeatherSync"
         weatherSync.Parent = remotes
 
+        local weatherRequest = remotes:FindFirstChild("WeatherRequest") or Instance.new("RemoteEvent")
+        weatherRequest.Name = "WeatherRequest"
+        weatherRequest.Parent = remotes
+
         -- Client-to-server admin commands
         cmdEvent.OnServerEvent:Connect(function(player, action, value)
             if not self:IsAdmin(player) then
                 return
             end
             if action == "Weather" and type(value) == "string" then
-                envConfig.Preset = value
-                self:SyncWeatherToPlayers()
+                -- Validate weather preset name before applying
+                if weatherPresets[value] then
+                    envConfig.Preset = value
+                    self:SyncWeatherToPlayers()
+                else
+                    warn("[Environment] Invalid weather preset:", value)
+                end
             elseif action == "Time" and type(value) == "number" then
                 Lighting.ClockTime = math.clamp(value, 0, 24)
-            elseif action == "Mute" then
-                -- Mute is LOCAL-ONLY: no broadcast to other players.
-                -- The client handles its own mute state independently.
             end
+        end)
+
+        -- Reliable handshake: client requests current weather state
+        weatherRequest.OnServerEvent:Connect(function(player)
+            -- Validate player exists and is in the game
+            if not player.Parent then return end
+            self:SyncWeatherToClient(player)
         end)
 
         -- Send current weather state to newly joining players
@@ -72,6 +90,9 @@ function Environment:Start()
             self:SyncWeatherToPlayers()
         end)
     end
+
+    -- Ensure CycleTime is initialized before the cycle starts
+    self.CycleTime = self.CycleTime or 0
 
     -- Day/Night cycle background task
     task.spawn(function()
@@ -82,6 +103,30 @@ function Environment:Start()
             task.wait(1)
         end
     end)
+end
+
+function Environment:SyncWeatherToClient(player)
+    local currentWeather = envConfig.Preset or "Clear"
+    local preset = weatherPresets[currentWeather] or weatherPresets.Clear
+    local remotes = ReplicatedStorage:FindFirstChild("Remotes")
+    if remotes then
+        local weatherSync = remotes:FindFirstChild("WeatherSync") or Instance.new("RemoteEvent")
+        weatherSync.Name = "WeatherSync"
+        weatherSync.Parent = remotes
+        weatherSync:FireClient(player, {
+            RainIntensity = preset.RainIntensity,
+            WindIntensity = preset.WindIntensity,
+            Lighting = {
+                Ambient = preset.Ambient,
+                OutdoorAmbient = preset.OutdoorAmbient,
+            },
+            Atmosphere = {
+                Density = preset.AtmosphereDensity,
+                Haze = preset.Haze,
+                Color = preset.FogColor or Color3.fromRGB(175, 217, 255),
+            }
+        })
+    end
 end
 
 function Environment:SyncWeatherToPlayers()

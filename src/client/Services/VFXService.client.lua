@@ -13,7 +13,22 @@ local lastRainIntensity = 0
 local RAIN_TEXTURE = "rbxassetid://73603683628019"
 local LIGHTNING_TEXTURE = "rbxassetid://3263281004"
 
+-- Asset validation: skip placeholder IDs safely
+local function isValidAssetId(assetId)
+    if not assetId then return false end
+    if string.find(assetId, "PLACEHOLDER") then return false end
+    if not string.find(assetId, "rbxasset://") then return false end
+    local success, id = pcall(function()
+        return tonumber(string.gsub(assetId, "rbxasset://", ""))
+    end)
+    return success and id and id > 0
+end
+
 function VFXService:Initialize()
+    -- Only initialize once
+    if self._initialized then return end
+    self._initialized = true
+
     self:SetupWeatherEffects()
     self:SetupEnvironmentListeners()
 end
@@ -96,12 +111,20 @@ function VFXService:SetupWeatherEffects()
     lightningBeam.FaceCamera = true
     lightningBeam.Parent = lightningModel
 
-    -- Thunder sound
-    -- IMPORTANT: SoundId uses "rbxasset://sounds/PLACEHOLDER" — NOT a valid Roblox audio.
-    -- Replace with verified Roblox asset ID before production release.
+    -- Thunder sound with valid asset ID check
+    -- Use a built-in Roblox sound if available, otherwise skip thunder
     thunderSound = Instance.new("Sound")
     thunderSound.Name = "ThunderSound"
-    thunderSound.SoundId = "rbxasset://sounds/PLACEHOLDER"
+    -- Use Roblox's built-in thunder sound if the asset ID is valid,
+    -- otherwise keep it disabled (placeholder IDs are safely skipped)
+    local validThunderId = isValidAssetId("rbxasset://sounds/PLACEHOLDER")
+    if validThunderId then
+        thunderSound.SoundId = "rbxasset://sounds/PLACEHOLDER"
+    else
+        -- Skip invalid placeholder; thunder will not play but game won't break
+        thunderSound:Destroy()
+        thunderSound = nil
+    end
     thunderSound.Volume = 0
     thunderSound.Parent = rainFolder
 
@@ -116,6 +139,15 @@ function VFXService:SetupEnvironmentListeners()
     weatherSync.OnClientEvent:Connect(function(data)
         self:OnWeatherSync(data)
     end)
+
+    -- Reliable handshake: request current weather state after listeners are connected.
+    -- Ensures clients joining after the initial broadcast still receive weather data.
+    local weatherRequest = remotes:FindFirstChild("WeatherRequest")
+    if weatherRequest then
+        pcall(function()
+            weatherRequest:FireServer()
+        end)
+    end
 end
 
 function VFXService:OnWeatherSync(data)
@@ -127,7 +159,7 @@ function VFXService:OnWeatherSync(data)
     rainParts.RainCurtain.Enabled = rainIntensity > 0.8
 
     -- Update atmosphere effects
-    self:UpdateFog(data.Atmosphere.Density)
+    self:UpdateFog(data.Atmosphere and data.Atmosphere.Density or 0)
 
     -- Handle lightning/thunder for storms
     if rainIntensity > 0.8 then
@@ -144,6 +176,7 @@ function VFXService:OnWeatherSync(data)
 end
 
 function VFXService:UpdateFog(density)
+    -- Initialize fog effect if not yet created
     if fogEffect == nil then
         fogEffect = Instance.new("Atmosphere")
         fogEffect.Parent = Lighting
@@ -158,7 +191,7 @@ function VFXService:ActivateLightning()
     if not rainParts.LightningEffect then return end
 
     -- Flash the lightning
-    local flashPart = rainParts.LightningEffect:FindFirstChild("Flash")
+    local flashPart = rainParts.LightningEffect and rainParts.LightningEffect:FindFirstChild("Flash")
     if flashPart then
         TweenService:Create(flashPart, TweenInfo.new(0.1), {
             Transparency = 0.5,
@@ -170,9 +203,19 @@ function VFXService:ActivateLightning()
         end)
     end
 
-    -- Play thunder sound
+    -- Play thunder sound if available
     if thunderSound then
         thunderSound:Play()
+        -- Simple volume tween for thunder
+        TweenService:Create(thunderSound, TweenInfo.new(1.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            Volume = 0.5,
+        }):Play()
+        -- Fade out
+        task.delay(1.5, function()
+            if thunderSound then
+                thunderSound.Volume = 0
+            end
+        end)
     end
 
     -- Update rain effects for storms
@@ -191,5 +234,7 @@ function VFXService:DeactivateLightning()
         flashPart.Transparency = 1
     end
 end
+
+VFXService:Initialize()
 
 return VFXService

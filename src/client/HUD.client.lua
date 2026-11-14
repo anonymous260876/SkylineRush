@@ -12,23 +12,23 @@ screen.Name = "SkylineHUD"
 screen.ResetOnSpawn = false
 screen.IgnoreGuiInset = false
 pcall(function()
-	screen.ScreenInsets = Enum.ScreenInsets.DeviceSafeInsets
+    screen.ScreenInsets = Enum.ScreenInsets.DeviceSafeInsets
 end)
 screen.Parent = player:WaitForChild("PlayerGui")
 
 local function rounded(frame, radius)
-	local corner = Instance.new("UICorner")
-	corner.CornerRadius = UDim.new(0, radius or Config.UI.CornerRadius)
-	corner.Parent = frame
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, radius or Config.UI.CornerRadius)
+    corner.Parent = frame
 end
 
 local function applyStroke(parent, color, thickness, transparency)
-	local stroke = Instance.new("UIStroke")
-	stroke.Color = color or Config.UI.Colors.Accent
-	stroke.Thickness = thickness or 1.5
-	stroke.Transparency = transparency or 0.4
-	stroke.Parent = parent
-	return stroke
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = color or Config.UI.Colors.Accent
+    stroke.Thickness = thickness or 1.5
+    stroke.Transparency = transparency or 0.4
+    stroke.Parent = parent
+    return stroke
 end
 
 -- Vitals (Top Center - Vertical layout containing pills row and progress bar)
@@ -63,28 +63,28 @@ pillsLayout.Padding = UDim.new(0, 10)
 pillsLayout.Parent = pillsRow
 
 local function createPill(name, icon, color)
-	local pill = Instance.new("Frame")
-	pill.Name = name
-	-- 45% width each allows for 10px spacing without overflow on narrow screens
-	pill.Size = UDim2.new(0.45, 0, 1, 0)
-	pill.BackgroundColor3 = Config.UI.Colors.Background
-	pill.BackgroundTransparency = 0.1
-	pill.Parent = pillsRow
-	rounded(pill)
-	applyStroke(pill, color)
+    local pill = Instance.new("Frame")
+    pill.Name = name
+    -- 45% width each allows for 10px spacing without overflow on narrow screens
+    pill.Size = UDim2.new(0.45, 0, 1, 0)
+    pill.BackgroundColor3 = Config.UI.Colors.Background
+    pill.BackgroundTransparency = 0.1
+    pill.Parent = pillsRow
+    rounded(pill)
+    applyStroke(pill, color)
 
-	local text = Instance.new("TextLabel")
-	text.Size = UDim2.new(1, -12, 1, 0)
-	text.Position = UDim2.fromScale(0.5, 0.5)
-	text.AnchorPoint = Vector2.new(0.5, 0.5)
-	text.BackgroundTransparency = 1
-	text.Font = Enum.Font.GothamBold
-	text.TextSize = 15
-	text.TextColor3 = color or Config.UI.Colors.Text
-	text.Text = icon .. " ---"
-	text.Parent = pill
+    local text = Instance.new("TextLabel")
+    text.Size = UDim2.new(1, -12, 1, 0)
+    text.Position = UDim2.fromScale(0.5, 0.5)
+    text.AnchorPoint = Vector2.new(0.5, 0.5)
+    text.BackgroundTransparency = 1
+    text.Font = Enum.Font.GothamBold
+    text.TextSize = 15
+    text.TextColor3 = color or Config.UI.Colors.Text
+    text.Text = icon .. " ---"
+    text.Parent = pill
 
-	return text
+    return text
 end
 
 local coinsLabel = createPill("Coins", "🪙", Config.UI.Colors.Coin)
@@ -167,13 +167,13 @@ drawerTitle.Parent = drawer
 -- Logic & Animations (declared before CloseButton connection)
 local drawerOpen = false
 local function toggleDrawer()
-	drawerOpen = not drawerOpen
-	local targetPos = drawerOpen and UDim2.new(1, -20, 0.5, 0) or UDim2.new(1.5, 0, 0.5, 0)
-	TweenService:Create(drawer, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-		Position = targetPos,
-	}):Play()
-	menuButton.Text = drawerOpen and "✕" or "⚡"
-	menuButton.BackgroundColor3 = drawerOpen and Config.UI.Colors.Danger or Config.UI.Colors.Accent
+    drawerOpen = not drawerOpen
+    local targetPos = drawerOpen and UDim2.new(1, -20, 0.5, 0) or UDim2.new(1.5, 0, 0.5, 0)
+    TweenService:Create(drawer, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+        Position = targetPos,
+    }):Play()
+    menuButton.Text = drawerOpen and "✕" or "⚡"
+    menuButton.BackgroundColor3 = drawerOpen and Config.UI.Colors.Danger or Config.UI.Colors.Accent
 end
 
 local closeBtn = Instance.new("TextButton")
@@ -208,60 +208,60 @@ scrollLayout.SortOrder = Enum.SortOrder.LayoutOrder
 scrollLayout.Parent = scroll
 
 local function createUpgradeCard(name, icon, order)
-	local card = Instance.new("Frame")
-	card.Name = name
-	card.LayoutOrder = order
-	card.Size = UDim2.new(1, 0, 0, 70)
-	card.BackgroundColor3 = Color3.fromRGB(30, 45, 75)
-	card.Parent = scroll
-	rounded(card)
+    local card = Instance.new("Frame")
+    card.Name = name
+    card.LayoutOrder = order
+    card.Size = UDim2.new(1, 0, 0, 70)
+    card.BackgroundColor3 = Color3.fromRGB(30, 45, 75)
+    card.Parent = scroll
+    rounded(card)
 
-	local title = Instance.new("TextLabel")
-	title.Name = "Title"
-	title.Size = UDim2.new(0.6, 0, 0.5, 0)
-	title.Position = UDim2.fromOffset(12, 10)
-	title.BackgroundTransparency = 1
-	title.Font = Enum.Font.GothamBold
-	title.TextSize = 16
-	title.TextColor3 = Config.UI.Colors.Text
-	title.TextXAlignment = Enum.TextXAlignment.Left
-	title.Text = icon .. " " .. name
-	title.Parent = card
+    local title = Instance.new("TextLabel")
+    title.Name = "Title"
+    title.Size = UDim2.new(0.6, 0, 0.5, 0)
+    title.Position = UDim2.fromOffset(12, 10)
+    title.BackgroundTransparency = 1
+    title.Font = Enum.Font.GothamBold
+    title.TextSize = 16
+    title.TextColor3 = Config.UI.Colors.Text
+    title.TextXAlignment = Enum.TextXAlignment.Left
+    title.Text = icon .. " " .. name
+    title.Parent = card
 
-	local detail = Instance.new("TextLabel")
-	detail.Name = "Detail"
-	detail.Size = UDim2.new(0.6, 0, 0.4, 0)
-	detail.Position = UDim2.new(0, 12, 0.5, 0)
-	detail.BackgroundTransparency = 1
-	detail.Font = Enum.Font.GothamMedium
-	detail.TextSize = 14
-	detail.TextColor3 = Config.UI.Colors.Accent
-	detail.TextXAlignment = Enum.TextXAlignment.Left
-	detail.Text = "Level 0"
-	detail.Parent = card
+    local detail = Instance.new("TextLabel")
+    detail.Name = "Detail"
+    detail.Size = UDim2.new(0.6, 0, 0.4, 0)
+    detail.Position = UDim2.new(0, 12, 0.5, 0)
+    detail.BackgroundTransparency = 1
+    detail.Font = Enum.Font.GothamMedium
+    detail.TextSize = 14
+    detail.TextColor3 = Config.UI.Colors.Accent
+    detail.TextXAlignment = Enum.TextXAlignment.Left
+    detail.Text = "Level 0"
+    detail.Parent = card
 
-	local cost = Instance.new("TextLabel")
-	cost.Name = "Cost"
-	cost.Size = UDim2.new(0.35, 0, 0.6, 0)
-	cost.Position = UDim2.new(1, -12, 0.5, 0)
-	cost.AnchorPoint = Vector2.new(1, 0.5)
-	cost.BackgroundColor3 = Config.UI.Colors.Background
-	cost.Font = Enum.Font.GothamBold
-	cost.TextSize = 16
-	cost.TextColor3 = Config.UI.Colors.Coin
-	cost.Text = "$0"
-	cost.Parent = card
-	rounded(cost, 8)
-	applyStroke(cost, Config.UI.Colors.Coin, 1, 0.6)
+    local cost = Instance.new("TextLabel")
+    cost.Name = "Cost"
+    cost.Size = UDim2.new(0.35, 0, 0.6, 0)
+    cost.Position = UDim2.new(1, -12, 0.5, 0)
+    cost.AnchorPoint = Vector2.new(1, 0.5)
+    cost.BackgroundColor3 = Config.UI.Colors.Background
+    cost.Font = Enum.Font.GothamBold
+    cost.TextSize = 16
+    cost.TextColor3 = Config.UI.Colors.Coin
+    cost.Text = "$0"
+    cost.Parent = card
+    rounded(cost, 8)
+    applyStroke(cost, Config.UI.Colors.Coin, 1, 0.6)
 
-	return { card = card, detail = detail, cost = cost }
+    return { card = card, detail = detail, cost = cost }
 end
 
 local cards = {
-	Speed = createUpgradeCard("Speed", "⚡", 1),
-	Capacity = createUpgradeCard("Bag", "▣", 2),
-	Generator = createUpgradeCard("Generator", "✦", 3),
-	Zone = createUpgradeCard("Zone", "◈", 4),
+    Speed = createUpgradeCard("Speed", "⚡", 1),
+    Capacity = createUpgradeCard("Bag", "▣", 2),
+    Generator = createUpgradeCard("Generator", "✦", 3),
+    Zone = createUpgradeCard("Zone", "◈", 4),
 }
 
 -- Stats Overlay (Bottom Left)
@@ -279,20 +279,20 @@ statsLayout.Padding = UDim.new(0, 4)
 statsLayout.Parent = statsOverlay
 
 local function createSmallLabel(name, color)
-	local lbl = Instance.new("TextLabel")
-	lbl.Name = name
-	lbl.Size = UDim2.new(1, 0, 0, 20)
-	lbl.BackgroundTransparency = 1
-	lbl.Font = Enum.Font.GothamMedium
-	lbl.TextSize = 14
-	lbl.TextColor3 = color or Config.UI.Colors.Text
-	lbl.TextXAlignment = Enum.TextXAlignment.Left
-	lbl.Text = ""
-	lbl.Parent = statsOverlay
-	local stroke = Instance.new("UIStroke")
-	stroke.Thickness = 0.5
-	stroke.Parent = lbl
-	return lbl
+    local lbl = Instance.new("TextLabel")
+    lbl.Name = name
+    lbl.Size = UDim2.new(1, 0, 0, 20)
+    lbl.BackgroundTransparency = 1
+    lbl.Font = Enum.Font.GothamMedium
+    lbl.TextSize = 14
+    lbl.TextColor3 = color or Config.UI.Colors.Text
+    lbl.TextXAlignment = Enum.TextXAlignment.Left
+    lbl.Text = ""
+    lbl.Parent = statsOverlay
+    local stroke = Instance.new("UIStroke")
+    stroke.Thickness = 0.5
+    stroke.Parent = lbl
+    return lbl
 end
 
 local incomeLabel = createSmallLabel("Income", Config.UI.Colors.Income)
@@ -321,69 +321,71 @@ toastConstraint.Parent = toast
 
 local nonce = 0
 notifyEvent.OnClientEvent:Connect(function(message)
-	nonce += 1
-	local current = nonce
-	toast.Text = tostring(message)
-	TweenService:Create(toast, TweenInfo.new(0.2), { BackgroundTransparency = 0.1, TextTransparency = 0 }):Play()
-	task.delay(2.5, function()
-		if nonce ~= current then return end
-		TweenService:Create(toast, TweenInfo.new(0.4), { BackgroundTransparency = 1, TextTransparency = 1 }):Play()
-	end)
+    nonce += 1
+    local current = nonce
+    toast.Text = tostring(message)
+    TweenService:Create(toast, TweenInfo.new(0.2), { BackgroundTransparency = 0.1, TextTransparency = 0 }):Play()
+    task.delay(2.5, function()
+        if nonce ~= current then return end
+        TweenService:Create(toast, TweenInfo.new(0.4), { BackgroundTransparency = 1, TextTransparency = 1 }):Play()
+    end)
 end)
 
 -- Audio controls for environment (local-only mute toggle)
-local function setupAudioControls()
-	local audioButton = Instance.new("TextButton")
-	audioButton.Name = "AudioButton"
-	audioButton.Size = UDim2.fromOffset(70, 70)
-	audioButton.Position = UDim2.new(1, -96, 0.65, 0)
-	audioButton.AnchorPoint = Vector2.new(1, 0.5)
-	audioButton.BackgroundTransparency = 1
-	audioButton.Text = "🔊"
-	audioButton.TextSize = 30
-	audioButton.Font = Enum.Font.GothamBold
-	audioButton.Parent = screen
+-- Uses AudioModule directly so each player's mute is independent
+local AudioModule = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("AudioModule"))
+local isMuted = AudioModule:GetMuteState(player.UserId)
 
-	audioButton.MouseButton1Click:Connect(function()
-		-- Local-only mute toggle: does NOT broadcast to other players
-		if AudioService and AudioService.ToggleMute then
-			AudioService:ToggleMute()
-			audioButton.Text = AudioService:Icon()
-		end
-	end)
+local function setupAudioControls()
+    local audioButton = Instance.new("TextButton")
+    audioButton.Name = "AudioButton"
+    audioButton.Size = UDim2.fromOffset(70, 70)
+    audioButton.Position = UDim2.new(1, -96, 0.65, 0)
+    audioButton.AnchorPoint = Vector2.new(1, 0.5)
+    audioButton.BackgroundTransparency = 1
+    audioButton.Text = AudioModule:GetIcon(isMuted)
+    audioButton.TextSize = 30
+    audioButton.Font = Enum.Font.GothamBold
+    audioButton.Parent = screen
+
+    audioButton.MouseButton1Click:Connect(function()
+        -- Local-only mute toggle: does NOT broadcast to other players
+        isMuted = AudioModule:ToggleMute(player.UserId)
+        audioButton.Text = AudioModule:GetIcon(isMuted)
+    end)
 end
 
 setupAudioControls()
 
 local function formatCost(value)
-	if value == "MAX" then return "MAX" end
-	return type(value) == "number" and ("$" .. tostring(value)) or tostring(value)
+    if value == "MAX" then return "MAX" end
+    return type(value) == "number" and ("$" .. tostring(value)) or tostring(value)
 end
 
 syncEvent.OnClientEvent:Connect(function(data)
-	coinsLabel.Text = string.format("🪙 %d", data.Coins)
-	bagLabel.Text = string.format("📦 %d / %d", data.Crystals, data.Capacity)
+    coinsLabel.Text = string.format("🪙 %d", data.Coins)
+    bagLabel.Text = string.format("📦 %d / %d", data.Crystals, data.Capacity)
 
-	local fillScale = math.clamp(data.Crystals / math.max(1, data.Capacity), 0, 1)
-	TweenService:Create(progressFill, TweenInfo.new(0.3), { Size = UDim2.fromScale(fillScale, 1) }):Play()
+    local fillScale = math.clamp(data.Crystals / math.max(1, data.Capacity), 0, 1)
+    TweenService:Create(progressFill, TweenInfo.new(0.3), { Size = UDim2.fromScale(fillScale, 1) }):Play()
 
-	-- Update Drawer Cards
-	cards.Speed.detail.Text = string.format("Level %d", data.SpeedLevel)
-	cards.Speed.cost.Text = formatCost(data.NextCosts.Speed)
+    -- Update Drawer Cards
+    cards.Speed.detail.Text = string.format("Level %d", data.SpeedLevel)
+    cards.Speed.cost.Text = formatCost(data.NextCosts.Speed)
 
-	cards.Capacity.detail.Text = string.format("Level %d", data.CapacityLevel)
-	cards.Capacity.cost.Text = formatCost(data.NextCosts.Cost or data.NextCosts.Capacity) -- fallback check
+    cards.Capacity.detail.Text = string.format("Level %d", data.CapacityLevel)
+    cards.Capacity.cost.Text = formatCost(data.NextCosts.Cost or data.NextCosts.Capacity) -- fallback check
 
-	cards.Generator.detail.Text = string.format("Level %d", data.GeneratorLevel)
-	cards.Generator.cost.Text = formatCost(data.NextCosts.Generator)
+    cards.Generator.detail.Text = string.format("Level %d", data.GeneratorLevel)
+    cards.Generator.cost.Text = formatCost(data.NextCosts.Generator)
 
-	cards.Zone.detail.Text = string.format("Zone %d / 3", data.ZoneLevel + 1)
-	cards.Zone.cost.Text = formatCost(data.NextCosts.Zone)
+    cards.Zone.detail.Text = string.format("Zone %d / 3", data.ZoneLevel + 1)
+    cards.Zone.cost.Text = formatCost(data.NextCosts.Zone)
 
-	-- Update Stats
-	incomeLabel.Text = string.format("Income: +%d / %ds", data.IncomePerTick, data.IncomeInterval)
-	totalLabel.Text = string.format("Lifetime: %d", data.TotalCollected)
-	demoLabel.Text = data.IsGuest and "STUDIO DEMO - NO SAVE" or ""
+    -- Update Stats
+    incomeLabel.Text = string.format("Income: +%d / %ds", data.IncomePerTick, data.IncomeInterval)
+    totalLabel.Text = string.format("Lifetime: %d", data.TotalCollected)
+    demoLabel.Text = data.IsGuest and "STUDIO DEMO - NO SAVE" or ""
 end)
 
 -- Initial Sync
