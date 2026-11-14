@@ -349,7 +349,8 @@ local function setupAudioControls()
 		if AudioService and AudioService.ToggleMute then
 			AudioService:ToggleMute()
 			audioButton.Text = AudioService:Icon()
-		end)
+		end
+	end)
 end
 
 setupAudioControls()
